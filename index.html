@@ -1,5 +1,1186 @@
- <htmL>
-    <body>
-        
-    </body>
- </htmL>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PulseAI News — Live Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0d0d0d;
+  --ink-soft: #444;
+  --ink-muted: #888;
+  --paper: #faf9f6;
+  --paper-2: #f2f0eb;
+  --paper-3: #e8e4dc;
+  --accent: #c0392b;
+  --accent-2: #e67e22;
+  --teal: #0f6e56;
+  --blue: #185FA5;
+  --gold: #b8860b;
+  --border: rgba(0,0,0,0.1);
+  --border-strong: rgba(0,0,0,0.18);
+  --radius: 4px;
+  --radius-lg: 8px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--paper-2); }
+::-webkit-scrollbar-thumb { background: var(--paper-3); border-radius: 3px; }
+
+/* ─── LIVE TICKER ─── */
+.ticker-bar {
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 36px;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.ticker-badge {
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 0 14px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.ticker-dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; margin-right: 8px; animation: pulse-dot 1.4s infinite; }
+@keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+.ticker-scroll-wrap { flex: 1; overflow: hidden; position: relative; }
+.ticker-scroll {
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  animation: ticker 45s linear infinite;
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.01em;
+}
+.ticker-scroll:hover { animation-play-state: paused; }
+.ticker-item { padding: 0 32px; border-right: 1px solid rgba(255,255,255,0.15); }
+.ticker-item span { color: var(--accent-2); font-weight: 500; margin-right: 6px; }
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.ticker-time { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.4); padding: 0 14px; flex-shrink: 0; border-left: 1px solid rgba(255,255,255,0.1); }
+
+/* ─── MASTHEAD / HEADER ─── */
+.masthead {
+  border-bottom: 3px solid var(--ink);
+  padding: 0 40px;
+  background: var(--paper);
+  position: sticky;
+  top: 36px;
+  z-index: 90;
+}
+.masthead-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 16px; height: 16px; }
+.logo-ai { color: var(--accent); }
+.masthead-actions { display: flex; align-items: center; gap: 12px; }
+.search-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  padding: 6px 14px;
+  gap: 8px;
+  background: var(--paper-2);
+  transition: border-color 0.2s, background 0.2s;
+}
+.search-wrap:focus-within { border-color: var(--ink); background: #fff; }
+.search-wrap input {
+  border: none; background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px; color: var(--ink); outline: none; width: 200px;
+}
+.search-wrap input::placeholder { color: var(--ink-muted); }
+.btn-sub {
+  background: var(--ink); color: #fff;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  padding: 8px 20px; border-radius: 20px; border: none; cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-sub:hover { background: var(--accent); }
+.btn-sub:active { transform: scale(0.97); }
+
+/* NAV */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-link {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px 18px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.nav-link:hover, .nav-link.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+/* ─── PAGE LAYOUT ─── */
+.page { padding: 0 40px; max-width: 1400px; margin: 0 auto; }
+
+/* ─── HERO SECTION ─── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+}
+.hero-main { display: flex; flex-direction: column; gap: 0; }
+.hero-img {
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.hero-img-overlay {
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-img-badge {
+  position: absolute; top: 16px; left: 16px;
+  background: var(--accent); color: #fff;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+  padding: 4px 10px; border-radius: 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.hero-img-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: pulse-dot 1.2s infinite; }
+.hero-img-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  padding: 40px 20px 20px;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+.hero-cat {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 10px;
+}
+.hero-cat::before { content: ''; display: block; width: 16px; height: 2px; background: var(--accent); }
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 900; line-height: 1.15;
+  letter-spacing: -0.02em; color: var(--ink);
+  margin-bottom: 14px;
+}
+.hero-excerpt {
+  font-size: 16px; color: var(--ink-soft); line-height: 1.7;
+  margin-bottom: 18px;
+}
+.hero-meta { display: flex; align-items: center; gap: 16px; }
+.ai-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-family: var(--font-mono);
+  background: rgba(15,110,86,0.08); color: var(--teal);
+  border: 1px solid rgba(15,110,86,0.2);
+  padding: 4px 10px; border-radius: 20px;
+}
+.ai-chip::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--teal); }
+.meta-time { font-size: 12px; color: var(--ink-muted); font-family: var(--font-mono); }
+.meta-read { font-size: 12px; color: var(--ink-muted); }
+
+/* HERO SIDEBAR */
+.hero-sidebar { display: flex; flex-direction: column; gap: 0; border-left: 1px solid var(--border); padding-left: 40px; }
+.sidebar-head { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.side-article { padding: 14px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
+.side-article:hover { opacity: 0.7; }
+.side-article:last-child { border-bottom: none; }
+.side-cat { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+.side-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; line-height: 1.3; color: var(--ink); margin-bottom: 5px; }
+.side-meta { font-size: 11px; color: var(--ink-muted); font-family: var(--font-mono); }
+
+/* ─── SECTION LABELS ─── */
+.section-label {
+  display: flex; align-items: center; gap: 14px;
+  margin: 36px 0 20px;
+}
+.section-label-text {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted);
+  white-space: nowrap;
+}
+.section-label-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ─── CATEGORY CARDS GRID ─── */
+.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.cat-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  display: flex; flex-direction: column;
+}
+.cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
+.cat-card-bar { height: 4px; }
+.cat-card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+.cat-card-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.cat-card-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+.cat-card-excerpt { font-size: 13px; color: var(--ink-soft); line-height: 1.6; flex: 1; }
+.cat-card-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.cat-card-time { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); }
+.cat-card-read { font-size: 12px; color: var(--ink-muted); }
+
+/* ─── MAIN CONTENT AREA ─── */
+.content-row {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
+  padding: 20px 0 40px;
+}
+
+/* ─── ARTICLE FEED ─── */
+.feed-article {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.feed-article:hover { opacity: 0.7; }
+.feed-article:last-child { border-bottom: none; }
+.feed-article-cat {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.feed-article-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; color: var(--ink); }
+.feed-article-excerpt { font-size: 13px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 10px; }
+.feed-article-meta { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+.feed-article-img {
+  border-radius: var(--radius);
+  height: 90px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+/* ─── SIDEBAR WIDGETS ─── */
+.widget {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.widget-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.widget-title { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+.widget-body { padding: 0; }
+.trend-row { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: background 0.15s; }
+.trend-row:hover { background: var(--paper-2); }
+.trend-row:last-child { border-bottom: none; }
+.trend-n { font-family: var(--font-display); font-size: 22px; font-weight: 900; color: var(--paper-3); min-width: 28px; line-height: 1; }
+.trend-info { flex: 1; }
+.trend-info-title { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.4; margin-bottom: 3px; }
+.trend-info-sub { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); }
+
+/* Topics */
+.topics-wrap { padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.topic-pill {
+  font-size: 12px; padding: 5px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px; cursor: pointer;
+  color: var(--ink-soft);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: var(--font-body);
+}
+.topic-pill:hover { background: var(--paper-2); }
+.topic-pill.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* Weather */
+.weather-widget { padding: 16px; }
+.weather-main { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.weather-temp { font-family: var(--font-display); font-size: 42px; font-weight: 900; line-height: 1; }
+.weather-info p { font-size: 14px; color: var(--ink-soft); }
+.weather-info span { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+.weather-row { display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); }
+.weather-stat { text-align: center; }
+.weather-stat p { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); margin-bottom: 2px; }
+.weather-stat span { font-size: 14px; font-weight: 500; color: var(--ink); }
+
+/* ─── AUTHOR SPOTLIGHT ─── */
+.authors-section { background: var(--ink); padding: 60px 40px; }
+.authors-inner { max-width: 1400px; margin: 0 auto; }
+.authors-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 36px; }
+.authors-title { font-family: var(--font-display); font-size: 32px; font-weight: 900; color: #fff; }
+.authors-sub { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; text-transform: uppercase; }
+.authors-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.author-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: background 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+.author-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+.author-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  margin-bottom: 12px; color: #fff;
+}
+.author-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+.author-role { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 10px; }
+.author-stats { display: flex; gap: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
+.author-stat p { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.4); margin-bottom: 2px; }
+.author-stat span { font-size: 14px; font-weight: 600; color: #fff; }
+.author-score { margin-left: auto; display: flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 12px; color: var(--accent-2); }
+
+/* ─── LEARNING SECTION ─── */
+.learn-section { padding: 60px 40px; border-top: 1px solid var(--border); }
+.learn-inner { max-width: 1400px; margin: 0 auto; }
+.learn-head { margin-bottom: 36px; }
+.learn-title { font-family: var(--font-display); font-size: 32px; font-weight: 900; color: var(--ink); margin-bottom: 6px; }
+.learn-sub { font-size: 15px; color: var(--ink-soft); }
+.learn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.learn-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.learn-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.learn-card-top { padding: 24px; }
+.learn-card-icon { font-size: 32px; margin-bottom: 12px; }
+.learn-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.learn-card-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+.learn-card-bar-wrap { padding: 0 24px; margin: 0 0 12px; }
+.learn-card-bar-label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); margin-bottom: 5px; }
+.learn-card-bar-track { height: 3px; background: var(--paper-3); border-radius: 2px; }
+.learn-card-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.learn-card-footer { padding: 12px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.learn-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
+.learn-cta {
+  font-size: 12px; font-weight: 500; color: var(--ink); cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+}
+.learn-cta:hover { color: var(--accent); }
+
+/* ─── FOOTER ─── */
+.footer { background: var(--paper-2); border-top: 3px solid var(--ink); padding: 48px 40px 24px; }
+.footer-inner { max-width: 1400px; margin: 0 auto; }
+.footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 40px; margin-bottom: 40px; }
+.footer-brand-title { font-family: var(--font-display); font-size: 22px; font-weight: 900; margin-bottom: 10px; }
+.footer-brand-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 16px; }
+.footer-col-title { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 14px; }
+.footer-links { display: flex; flex-direction: column; gap: 9px; }
+.footer-links a { font-size: 13px; color: var(--ink-soft); transition: color 0.15s; }
+.footer-links a:hover { color: var(--ink); }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 24px; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+.footer-ai-badge { display: flex; align-items: center; gap: 6px; background: rgba(15,110,86,0.08); color: var(--teal); border: 1px solid rgba(15,110,86,0.2); padding: 4px 10px; border-radius: 20px; }
+
+/* ─── ARTICLE MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 60px 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+  overflow-y: auto;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--paper);
+  border-radius: 12px;
+  max-width: 680px; width: 100%;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px);
+  transition: transform 0.25s;
+}
+.modal-overlay.open .modal-box { transform: translateY(0); }
+.modal-header { padding: 28px 28px 0; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+.modal-close { float: right; background: var(--paper-2); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); }
+.modal-close:hover { background: var(--paper-3); }
+.modal-cat { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.modal-title { font-family: var(--font-display); font-size: 26px; font-weight: 900; line-height: 1.25; margin-bottom: 10px; }
+.modal-meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+.modal-body { padding: 24px 28px 28px; font-size: 15px; color: var(--ink-soft); line-height: 1.8; }
+.modal-body p { margin-bottom: 16px; }
+
+/* ─── ANIMATIONS ─── */
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── LIVE CHAT ─── */
+.chat-bubble {
+  position: fixed; bottom: 24px; right: 24px; z-index: 200;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--ink); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: var(--shadow-lg);
+  transition: transform 0.2s, background 0.2s;
+  font-size: 20px;
+}
+.chat-bubble:hover { transform: scale(1.08); background: var(--accent); }
+.chat-panel {
+  position: fixed; bottom: 88px; right: 24px; z-index: 200;
+  width: 320px; background: var(--paper);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px; box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none; transform: translateY(10px);
+  transition: opacity 0.2s, transform 0.2s;
+  overflow: hidden;
+}
+.chat-panel.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+.chat-panel-head { background: var(--ink); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+.chat-panel-head-dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; animation: pulse-dot 1.4s infinite; }
+.chat-panel-head p { font-weight: 500; font-size: 14px; }
+.chat-panel-head span { font-size: 11px; opacity: 0.6; }
+.chat-msgs { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; }
+.chat-msg { max-width: 80%; }
+.chat-msg.user { align-self: flex-end; }
+.chat-msg-bubble { padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+.chat-msg.bot .chat-msg-bubble { background: var(--paper-2); color: var(--ink); border-bottom-left-radius: 2px; }
+.chat-msg.user .chat-msg-bubble { background: var(--ink); color: #fff; border-bottom-right-radius: 2px; }
+.chat-input-wrap { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.chat-input-wrap input { flex: 1; border: 1px solid var(--border-strong); border-radius: 20px; padding: 8px 12px; font-family: var(--font-body); font-size: 13px; outline: none; background: var(--paper-2); color: var(--ink); }
+.chat-input-wrap input:focus { border-color: var(--ink); }
+.chat-send { background: var(--ink); color: #fff; border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: background 0.2s; }
+.chat-send:hover { background: var(--accent); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  .masthead, .page, .authors-section, .learn-section, .footer { padding-left: 20px; padding-right: 20px; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-sidebar { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 20px; display: grid; grid-template-columns: repeat(2, 1fr); }
+  .sidebar-head { grid-column: 1/-1; }
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .content-row { grid-template-columns: 1fr; }
+  .authors-grid { grid-template-columns: repeat(2, 1fr); }
+  .learn-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-link { padding: 12px 12px; font-size: 11px; }
+  .cat-grid, .learn-grid { grid-template-columns: 1fr; }
+  .authors-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 26px; }
+  .search-wrap input { width: 120px; }
+  .masthead-actions { gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── LIVE TICKER ─── -->
+<div class="ticker-bar">
+  <div class="ticker-badge"><span class="ticker-dot"></span>LIVE</div>
+  <div class="ticker-scroll-wrap">
+    <div class="ticker-scroll" id="tickerScroll">
+      <div class="ticker-item"><span>BREAKING</span> G7 nations sign landmark AI governance pact in Brussels</div>
+      <div class="ticker-item"><span>MARKETS</span> Sensex climbs 480 pts; Nifty above 23,200 on FII buying</div>
+      <div class="ticker-item"><span>TECH</span> OpenAI unveils GPT-6 with real-time multimodal reasoning</div>
+      <div class="ticker-item"><span>SPORTS</span> IPL: CSK beat MI by 6 wickets in high-scoring thriller</div>
+      <div class="ticker-item"><span>CLIMATE</span> India commits $40B to renewable energy by 2030</div>
+      <div class="ticker-item"><span>WORLD</span> UN Security Council meets over escalating tensions in Red Sea</div>
+      <div class="ticker-item"><span>BUSINESS</span> Reliance Industries reports record Q4 profits of ₹21,900 Cr</div>
+      <div class="ticker-item"><span>BREAKING</span> G7 nations sign landmark AI governance pact in Brussels</div>
+      <div class="ticker-item"><span>MARKETS</span> Sensex climbs 480 pts; Nifty above 23,200 on FII buying</div>
+      <div class="ticker-item"><span>TECH</span> OpenAI unveils GPT-6 with real-time multimodal reasoning</div>
+      <div class="ticker-item"><span>SPORTS</span> IPL: CSK beat MI by 6 wickets in high-scoring thriller</div>
+      <div class="ticker-item"><span>CLIMATE</span> India commits $40B to renewable energy by 2030</div>
+      <div class="ticker-item"><span>WORLD</span> UN Security Council meets over escalating tensions in Red Sea</div>
+      <div class="ticker-item"><span>BUSINESS</span> Reliance Industries reports record Q4 profits of ₹21,900 Cr</div>
+    </div>
+  </div>
+  <div class="ticker-time" id="tickerClock"></div>
+</div>
+
+<!-- ─── MASTHEAD ─── -->
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="3" fill="#fff"/>
+          <path d="M8 2v2M8 12v2M2 8h2M12 8h2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Pulse<span class="logo-ai">AI</span>
+    </div>
+    <div class="masthead-actions">
+      <div class="search-wrap">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="var(--ink-muted)" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="var(--ink-muted)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" placeholder="Search news, topics, authors…" id="searchInput" />
+      </div>
+      <button class="btn-sub">Subscribe</button>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <div class="nav-link active" onclick="filterArticles('all')">All News</div>
+    <div class="nav-link" onclick="filterArticles('business')">Business</div>
+    <div class="nav-link" onclick="filterArticles('geopolitics')">Geopolitics</div>
+    <div class="nav-link" onclick="filterArticles('tech')">Technology</div>
+    <div class="nav-link" onclick="filterArticles('sports')">Sports</div>
+    <div class="nav-link" onclick="filterArticles('world')">World</div>
+    <div class="nav-link" onclick="filterArticles('entertainment')">Entertainment</div>
+    <div class="nav-link" onclick="scrollToSection('learn')">📚 Learn</div>
+    <div class="nav-link" onclick="scrollToSection('authors')">✍ Authors</div>
+  </nav>
+</header>
+
+<!-- ─── MAIN ─── -->
+<main class="page" style="padding-top: 20px;">
+
+  <!-- HERO -->
+  <section class="hero fade-up">
+    <div class="hero-main">
+      <div class="hero-img">
+        <div class="hero-img-overlay"></div>
+        <div class="hero-img-badge">Breaking</div>
+        <div class="hero-img-caption">AI-generated — Sources: Reuters, AP, BBC World · Updated 3 mins ago</div>
+      </div>
+      <div class="hero-cat">Geopolitics</div>
+      <h1 class="hero-title">G7 leaders reach landmark agreement on AI governance framework after marathon talks</h1>
+      <p class="hero-excerpt">In a historic move, leaders from the world's seven largest economies finalized a sweeping framework to regulate artificial intelligence development, setting binding standards for transparency, safety testing, and cross-border data flows.</p>
+      <div class="hero-meta">
+        <div class="ai-chip">AI-generated summary</div>
+        <span class="meta-time">14 minutes ago</span>
+        <span class="meta-read">· 4 min read</span>
+      </div>
+    </div>
+    <div class="hero-sidebar">
+      <div class="sidebar-head">More top stories</div>
+      <div class="side-article" onclick="openArticle('markets')">
+        <div class="side-cat" style="color:var(--teal)">Business</div>
+        <div class="side-title">Global markets hit record highs as inflation cools faster than expected</div>
+        <div class="side-meta">28 min ago · 3 min read</div>
+      </div>
+      <div class="side-article" onclick="openArticle('quantum')">
+        <div class="side-cat" style="color:var(--blue)">Technology</div>
+        <div class="side-title">Quantum computing startup raises $500M to commercialize error-correction chip</div>
+        <div class="side-meta">1 hr ago · 5 min read</div>
+      </div>
+      <div class="side-article" onclick="openArticle('ipl')">
+        <div class="side-cat" style="color:var(--accent-2)">Sports</div>
+        <div class="side-title">IPL 2026: CSK tops the table after clinical win over MI in a nail-biter</div>
+        <div class="side-meta">2 hr ago · 2 min read</div>
+      </div>
+      <div class="side-article" onclick="openArticle('rbi')">
+        <div class="side-cat" style="color:var(--accent)">Finance</div>
+        <div class="side-title">RBI keeps repo rate unchanged at 6%, signals cuts by Q3 2026</div>
+        <div class="side-meta">4 hr ago · 3 min read</div>
+      </div>
+      <div class="side-article" onclick="openArticle('cannes')">
+        <div class="side-cat" style="color:#8e44ad">Entertainment</div>
+        <div class="side-title">Cannes 2026 lineup unveiled — Indian cinema gets record five entries</div>
+        <div class="side-meta">5 hr ago · 2 min read</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY CARDS -->
+  <div class="section-label fade-up">
+    <span class="section-label-text">Browse by category</span>
+    <div class="section-label-line"></div>
+  </div>
+  <div class="cat-grid fade-up">
+    <div class="cat-card" onclick="filterArticles('business')">
+      <div class="cat-card-bar" style="background:var(--teal)"></div>
+      <div class="cat-card-body">
+        <div class="cat-card-label" style="color:var(--teal)">Business & Finance</div>
+        <div class="cat-card-title">Sensex crosses 80,000 as FIIs pour ₹12,000 Cr in April</div>
+        <div class="cat-card-excerpt">Foreign institutional investors are back in Indian equities with strong conviction, driving benchmark indices to fresh all-time highs.</div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-time">45 min ago</span>
+        <span class="cat-card-read">4 min read</span>
+      </div>
+    </div>
+    <div class="cat-card" onclick="filterArticles('geopolitics')">
+      <div class="cat-card-bar" style="background:var(--accent)"></div>
+      <div class="cat-card-body">
+        <div class="cat-card-label" style="color:var(--accent)">Geopolitics</div>
+        <div class="cat-card-title">India-Pakistan trade talks resume after three-year freeze in Dubai</div>
+        <div class="cat-card-excerpt">Commerce ministers from both nations convened in Dubai for preliminary discussions on tariff normalization and bilateral trade routes.</div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-time">3 hr ago</span>
+        <span class="cat-card-read">5 min read</span>
+      </div>
+    </div>
+    <div class="cat-card" onclick="filterArticles('tech')">
+      <div class="cat-card-bar" style="background:var(--blue)"></div>
+      <div class="cat-card-body">
+        <div class="cat-card-label" style="color:var(--blue)">Technology</div>
+        <div class="cat-card-title">Meta's AR glasses hit 10M users — a new milestone for wearable tech</div>
+        <div class="cat-card-excerpt">Meta's Ray-Ban smart glasses crossed a significant adoption threshold, signaling mainstream acceptance of always-on AI assistants.</div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-time">6 hr ago</span>
+        <span class="cat-card-read">3 min read</span>
+      </div>
+    </div>
+    <div class="cat-card" onclick="filterArticles('sports')">
+      <div class="cat-card-bar" style="background:var(--accent-2)"></div>
+      <div class="cat-card-body">
+        <div class="cat-card-label" style="color:var(--accent-2)">Sports</div>
+        <div class="cat-card-title">India's Neeraj Chopra sets new national record at Doha Diamond League</div>
+        <div class="cat-card-excerpt">The Olympic champion hurled the javelin 90.23m, breaking his own national record and solidifying his status as the world's top thrower.</div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-time">8 hr ago</span>
+        <span class="cat-card-read">2 min read</span>
+      </div>
+    </div>
+    <div class="cat-card" onclick="filterArticles('world')">
+      <div class="cat-card-bar" style="background:#8e44ad"></div>
+      <div class="cat-card-body">
+        <div class="cat-card-label" style="color:#8e44ad">World & Cities</div>
+        <div class="cat-card-title">Singapore launches world's first AI-governed smart port at Tuas</div>
+        <div class="cat-card-excerpt">The fully autonomous container terminal uses real-time AI to coordinate 1,200+ vehicles, cranes, and vessels without human dispatch.</div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-time">10 hr ago</span>
+        <span class="cat-card-read">6 min read</span>
+      </div>
+    </div>
+    <div class="cat-card" onclick="filterArticles('entertainment')">
+      <div class="cat-card-bar" style="background:var(--gold)"></div>
+      <div class="cat-card-body">
+        <div class="cat-card-label" style="color:var(--gold)">Entertainment</div>
+        <div class="cat-card-title">Bollywood's summer blockbuster earns ₹500 Cr in opening weekend</div>
+        <div class="cat-card-excerpt">The action epic smashed box office records across India and Southeast Asia, marking the biggest Hindi film opening since 2023.</div>
+      </div>
+      <div class="cat-card-footer">
+        <span class="cat-card-time">Yesterday</span>
+        <span class="cat-card-read">3 min read</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT ROW: FEED + SIDEBAR -->
+  <div class="section-label fade-up" style="margin-top:40px">
+    <span class="section-label-text">Latest articles</span>
+    <div class="section-label-line"></div>
+  </div>
+
+  <div class="content-row fade-up">
+    <div id="articleFeed">
+      <!-- Articles injected by JS -->
+    </div>
+    <div>
+      <!-- Trending Widget -->
+      <div class="widget">
+        <div class="widget-head"><span class="widget-title">Trending right now</span></div>
+        <div class="widget-body">
+          <div class="trend-row" onclick="openArticle('g7')"><div class="trend-n">1</div><div class="trend-info"><div class="trend-info-title">G7 AI governance deal</div><div class="trend-info-sub">Geopolitics · 42,800 reads</div></div></div>
+          <div class="trend-row" onclick="openArticle('markets')"><div class="trend-n">2</div><div class="trend-info"><div class="trend-info-title">Sensex record highs</div><div class="trend-info-sub">Business · 31,200 reads</div></div></div>
+          <div class="trend-row" onclick="openArticle('quantum')"><div class="trend-n">3</div><div class="trend-info"><div class="trend-info-title">Quantum chip $500M round</div><div class="trend-info-sub">Technology · 19,700 reads</div></div></div>
+          <div class="trend-row" onclick="openArticle('ipl')"><div class="trend-n">4</div><div class="trend-info"><div class="trend-info-title">IPL 2026 standings</div><div class="trend-info-sub">Sports · 17,400 reads</div></div></div>
+          <div class="trend-row" onclick="openArticle('cannes')"><div class="trend-n">5</div><div class="trend-info"><div class="trend-info-title">Cannes 2026 lineup</div><div class="trend-info-sub">Entertainment · 12,100 reads</div></div></div>
+        </div>
+      </div>
+
+      <!-- Topics Widget -->
+      <div class="widget">
+        <div class="widget-head"><span class="widget-title">Your topics</span><span style="font-size:11px;color:var(--ink-muted);font-family:var(--font-mono);cursor:pointer">Manage</span></div>
+        <div class="topics-wrap" id="topicsWrap">
+          <span class="topic-pill active" onclick="toggleTopic(this)">AI & Tech</span>
+          <span class="topic-pill active" onclick="toggleTopic(this)">India</span>
+          <span class="topic-pill active" onclick="toggleTopic(this)">Markets</span>
+          <span class="topic-pill" onclick="toggleTopic(this)">Climate</span>
+          <span class="topic-pill" onclick="toggleTopic(this)">Sports</span>
+          <span class="topic-pill" onclick="toggleTopic(this)">Geopolitics</span>
+          <span class="topic-pill" onclick="toggleTopic(this)">Entertainment</span>
+          <span class="topic-pill" onclick="toggleTopic(this)">Science</span>
+          <span class="topic-pill" style="border-style:dashed" onclick="addTopic()">+ Add topic</span>
+        </div>
+      </div>
+
+      <!-- Weather Widget -->
+      <div class="widget">
+        <div class="widget-head"><span class="widget-title">Delhi, India</span><span style="font-size:11px;color:var(--ink-muted);font-family:var(--font-mono)">Today</span></div>
+        <div class="widget-body">
+          <div class="weather-widget">
+            <div class="weather-main">
+              <div style="font-size:40px">☀️</div>
+              <div>
+                <div class="weather-temp">38°</div>
+                <div class="weather-info"><p>Partly sunny, hazy</p><span>Feels like 42°C</span></div>
+              </div>
+            </div>
+            <div class="weather-row">
+              <div class="weather-stat"><p>Humidity</p><span>28%</span></div>
+              <div class="weather-stat"><p>Wind</p><span>14 km/h</span></div>
+              <div class="weather-stat"><p>AQI</p><span style="color:var(--accent)">162</span></div>
+              <div class="weather-stat"><p>UV Index</p><span>9</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Summary Widget -->
+      <div class="widget" style="background:var(--ink);border-color:var(--ink)">
+        <div class="widget-head" style="border-color:rgba(255,255,255,0.1)">
+          <span class="widget-title" style="color:rgba(255,255,255,0.5)">AI Daily Brief</span>
+          <span style="font-size:10px;background:rgba(15,110,86,0.3);color:#5dcaa5;padding:2px 8px;border-radius:10px;font-family:var(--font-mono)">LIVE</span>
+        </div>
+        <div style="padding:16px">
+          <p style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:12px">Today's top story is the <strong style="color:#fff;font-weight:500">G7 AI framework deal</strong>, which markets are responding to positively. Tech stocks surged 1.8% on news of regulatory clarity.</p>
+          <p style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:14px">Domestically, the <strong style="color:#fff;font-weight:500">Sensex hit a record</strong> on FII inflows, while the RBI's rate hold has steadied the rupee at ₹83.4/USD.</p>
+          <button onclick="openArticle('brief')" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:8px 16px;border-radius:20px;font-family:var(--font-body);font-size:12px;cursor:pointer;width:100%;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">Read full brief →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ─── AUTHOR SPOTLIGHT ─── -->
+<section class="authors-section" id="authors">
+  <div class="authors-inner">
+    <div class="authors-head">
+      <div>
+        <div class="authors-sub">Featured writers</div>
+        <div class="authors-title">Author Spotlight</div>
+      </div>
+      <button style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:10px 20px;border-radius:20px;font-family:var(--font-body);font-size:13px;cursor:pointer">See all authors →</button>
+    </div>
+    <div class="authors-grid">
+      <div class="author-card fade-up">
+        <div class="author-avatar" style="background:var(--accent)">PR</div>
+        <div class="author-name">Priya Rajan</div>
+        <div class="author-role">Senior Tech Correspondent</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:10px">Covers AI, semiconductors, and the future of work. Former WIRED India editor.</div>
+        <div class="author-stats">
+          <div class="author-stat"><p>Articles</p><span>342</span></div>
+          <div class="author-stat"><p>Followers</p><span>18.2K</span></div>
+          <div class="author-score">⭐ 4.9</div>
+        </div>
+      </div>
+      <div class="author-card fade-up">
+        <div class="author-avatar" style="background:var(--teal)">AK</div>
+        <div class="author-name">Arjun Khanna</div>
+        <div class="author-role">Markets & Finance Editor</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:10px">15 years in financial journalism. Focuses on India's macro story and global capital flows.</div>
+        <div class="author-stats">
+          <div class="author-stat"><p>Articles</p><span>510</span></div>
+          <div class="author-stat"><p>Followers</p><span>24.6K</span></div>
+          <div class="author-score">⭐ 4.8</div>
+        </div>
+      </div>
+      <div class="author-card fade-up">
+        <div class="author-avatar" style="background:var(--blue)">SM</div>
+        <div class="author-name">Sneha Mehta</div>
+        <div class="author-role">Geopolitics Analyst</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:10px">Former diplomat, now covering South Asia, the Middle East, and emerging power dynamics.</div>
+        <div class="author-stats">
+          <div class="author-stat"><p>Articles</p><span>287</span></div>
+          <div class="author-stat"><p>Followers</p><span>31.1K</span></div>
+          <div class="author-score">⭐ 4.9</div>
+        </div>
+      </div>
+      <div class="author-card fade-up">
+        <div class="author-avatar" style="background:var(--gold)">RV</div>
+        <div class="author-name">Rohan Verma</div>
+        <div class="author-role">Sports & Culture Writer</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:10px">Cricket, football, and the business of entertainment. Known for long-form narrative journalism.</div>
+        <div class="author-stats">
+          <div class="author-stat"><p>Articles</p><span>419</span></div>
+          <div class="author-stat"><p>Followers</p><span>15.8K</span></div>
+          <div class="author-score">⭐ 4.7</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── LEARNING SECTION ─── -->
+<section class="learn-section" id="learn">
+  <div class="learn-inner">
+    <div class="learn-head">
+      <div class="learn-title">Student Certifications & Learning</div>
+      <div class="learn-sub">Master news writing, data journalism, and AI-powered reporting with expert-led courses.</div>
+    </div>
+    <div class="learn-grid">
+      <div class="learn-card fade-up">
+        <div class="learn-card-top">
+          <div class="learn-card-icon">🤖</div>
+          <div class="learn-card-title">AI Journalism Fundamentals</div>
+          <div class="learn-card-desc">Learn how AI writes, curates, and verifies news. Understand bias, hallucination, and how to use AI responsibly in a newsroom.</div>
+        </div>
+        <div class="learn-card-bar-wrap">
+          <div class="learn-card-bar-label"><span>Progress</span><span>60%</span></div>
+          <div class="learn-card-bar-track"><div class="learn-card-bar-fill" style="width:60%;background:var(--teal)"></div></div>
+        </div>
+        <div class="learn-card-footer">
+          <span class="learn-tag" style="background:rgba(15,110,86,0.1);color:var(--teal)">Free · 4 modules</span>
+          <div class="learn-cta" onclick="openArticle('cert1')">Continue →</div>
+        </div>
+      </div>
+      <div class="learn-card fade-up">
+        <div class="learn-card-top">
+          <div class="learn-card-icon">📊</div>
+          <div class="learn-card-title">Data Reporting & Visualization</div>
+          <div class="learn-card-desc">Turn raw datasets into compelling visual stories. Master tools like Datawrapper, Flourish, and Python for journalists.</div>
+        </div>
+        <div class="learn-card-bar-wrap">
+          <div class="learn-card-bar-label"><span>Progress</span><span>100%</span></div>
+          <div class="learn-card-bar-track"><div class="learn-card-bar-fill" style="width:100%;background:var(--blue)"></div></div>
+        </div>
+        <div class="learn-card-footer">
+          <span class="learn-tag" style="background:rgba(24,95,165,0.1);color:var(--blue)">Certified · 8 modules</span>
+          <div class="learn-cta" onclick="openArticle('cert2')">View certificate →</div>
+        </div>
+      </div>
+      <div class="learn-card fade-up">
+        <div class="learn-card-top">
+          <div class="learn-card-icon">💼</div>
+          <div class="learn-card-title">Business & Financial Analysis</div>
+          <div class="learn-card-desc">Decode balance sheets, earnings calls, and market trends. Write financial news that non-experts actually understand.</div>
+        </div>
+        <div class="learn-card-bar-wrap">
+          <div class="learn-card-bar-label"><span>Progress</span><span>30%</span></div>
+          <div class="learn-card-bar-track"><div class="learn-card-bar-fill" style="width:30%;background:var(--accent-2)"></div></div>
+        </div>
+        <div class="learn-card-footer">
+          <span class="learn-tag" style="background:rgba(230,126,34,0.1);color:var(--accent-2)">Pro · 12 modules</span>
+          <div class="learn-cta" onclick="openArticle('cert3')">Start →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Dashboard Strip -->
+    <div style="margin-top:28px;background:var(--paper-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;display:flex;align-items:center;gap:40px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px">Your dashboard</div>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:900">Rahul S.</div>
+      </div>
+      <div style="display:flex;gap:32px;flex-wrap:wrap">
+        <div><div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-muted);margin-bottom:3px">Courses enrolled</div><div style="font-size:24px;font-weight:600">3</div></div>
+        <div><div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-muted);margin-bottom:3px">Certs earned</div><div style="font-size:24px;font-weight:600;color:var(--teal)">1</div></div>
+        <div><div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-muted);margin-bottom:3px">Points</div><div style="font-size:24px;font-weight:600;color:var(--blue)">740</div></div>
+        <div><div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-muted);margin-bottom:3px">Streak</div><div style="font-size:24px;font-weight:600;color:var(--accent-2)">12 🔥</div></div>
+      </div>
+      <div style="margin-left:auto">
+        <button class="btn-sub">Go to Dashboard →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-title">PulseAI News</div>
+        <div class="footer-brand-desc">AI-powered journalism for the curious mind. Delivering fast, accurate, and personalized news across business, geopolitics, technology, sports, and culture.</div>
+        <div class="footer-ai-badge" style="display:inline-flex"><span style="width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0"></span>Powered by AI · Verified by humans</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Categories</div>
+        <div class="footer-links">
+          <a href="#">Business & Finance</a>
+          <a href="#">Geopolitics</a>
+          <a href="#">Technology</a>
+          <a href="#">Sports</a>
+          <a href="#">Entertainment</a>
+          <a href="#">World & Cities</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Learn</div>
+        <div class="footer-links">
+          <a href="#">AI Journalism</a>
+          <a href="#">Data Reporting</a>
+          <a href="#">Financial Analysis</a>
+          <a href="#">Author Tools</a>
+          <a href="#">Student Dashboard</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-links">
+          <a href="#">About PulseAI</a>
+          <a href="#">Editorial Standards</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Contact</a>
+          <a href="#">Advertise</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PulseAI News. All rights reserved.</span>
+      <span style="font-size:11px;color:var(--ink-muted)">Articles are AI-generated summaries from verified sources. Always check original reporting.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── ARTICLE MODAL ─── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModalBtn()">✕</button>
+      <div class="modal-cat" id="modalCat"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-meta" id="modalMeta"></div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ─── LIVE CHAT ─── -->
+<div class="chat-bubble" id="chatBubble" onclick="toggleChat()" title="Live Discussion">💬</div>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-panel-head">
+    <div class="chat-panel-head-dot"></div>
+    <div>
+      <p>Live Discussion</p>
+      <span>142 readers online</span>
+    </div>
+  </div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="chat-msg bot"><div class="chat-msg-bubble">Welcome to PulseAI Live Chat! Discuss today's top stories.</div></div>
+    <div class="chat-msg bot"><div class="chat-msg-bubble">The G7 AI deal is dominating the conversation today. What do you think?</div></div>
+  </div>
+  <div class="chat-input-wrap">
+    <input type="text" id="chatInput" placeholder="Join the discussion…" onkeydown="handleChatKey(event)" />
+    <button class="chat-send" onclick="sendChat()">↑</button>
+  </div>
+</div>
+
+<!-- ─── JAVASCRIPT ─── -->
+<script>
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('tickerClock').textContent =
+    now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) + ' IST';
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── ARTICLES DATA ──
+const articles = [
+  { id: 'g7', cat: 'Geopolitics', catColor: 'var(--accent)', title: 'G7 leaders reach landmark agreement on AI governance framework', excerpt: 'In a historic move, leaders from seven major economies finalized sweeping standards for AI transparency and safety testing.', time: '14 min ago', read: '4 min', emoji: '🌐', tag: 'geopolitics', body: '<p>In Brussels, G7 leaders signed a comprehensive agreement setting binding standards for AI development. The framework mandates transparency in AI training data, safety testing before deployment, and cross-border data sharing protocols.</p><p>The deal, brokered after 18 months of negotiations, creates a new international body — the Global AI Standards Board — tasked with enforcing compliance. Member nations have 24 months to align domestic regulations with the framework.</p><p>Tech companies reacted with cautious optimism. "Regulatory clarity is exactly what the industry needed," said one Silicon Valley CEO. Critics, however, argue the framework lacks enforcement teeth against non-signatory nations like China and India.</p>' },
+  { id: 'markets', cat: 'Business', catColor: 'var(--teal)', title: 'Sensex crosses 80,000 as FIIs pour ₹12,000 Cr in a single session', excerpt: 'Foreign institutional investors returned aggressively to Indian equities, driving benchmark indices to record highs on strong macroeconomic data.', time: '45 min ago', read: '3 min', emoji: '📈', tag: 'business', body: '<p>The BSE Sensex closed above 80,000 for the first time ever on Thursday, as foreign institutional investors (FIIs) poured ₹12,000 crore into Indian equities in a single trading session — the highest single-day FII inflow since October 2021.</p><p>The rally was broad-based, with IT, banking, and consumer sectors leading gains. The Nifty 50 also hit a fresh all-time high of 24,230. The rupee strengthened to 83.2 against the US dollar.</p><p>Analysts attribute the surge to a combination of RBI rate stability, strong Q4 earnings, and global risk-on sentiment following the G7 AI framework announcement, which boosted confidence in tech stocks globally.</p>' },
+  { id: 'quantum', cat: 'Technology', catColor: 'var(--blue)', title: 'Quantum computing startup raises $500M to commercialize error-correction chip', excerpt: 'The funding round marks a pivotal moment for applied quantum research, with practical applications expected in cryptography and drug discovery.', time: '1 hr ago', read: '5 min', emoji: '⚛️', tag: 'tech', body: '<p>QubitCore, a Bangalore-born quantum computing startup, has raised $500 million in a Series C round led by a consortium of sovereign wealth funds from UAE, Singapore, and Norway. The company\'s proprietary error-correction chip reduces quantum decoherence by 97%, a breakthrough that has eluded the industry for decades.</p><p>CEO Dr. Ananya Krishnamurthy said commercial applications will focus first on pharmaceutical simulations and financial modeling. "We expect our first enterprise deployments by late 2026," she told reporters.</p><p>The raise values QubitCore at $4.2 billion, making it India\'s most valuable deep-tech startup and a rare entrant into the global quantum race dominated by IBM, Google, and Microsoft.</p>' },
+  { id: 'ipl', cat: 'Sports', catColor: 'var(--accent-2)', title: 'IPL 2026: CSK beats MI by 6 wickets in a thrilling evening clash at Wankhede', excerpt: 'A clinical 67* from Ruturaj Gaikwad anchored Chennai\'s chase as they overhauled Mumbai\'s 178 with two overs to spare.', time: '2 hr ago', read: '2 min', emoji: '🏏', tag: 'sports', body: '<p>Chennai Super Kings moved to the top of the IPL 2026 table after a commanding 6-wicket victory over Mumbai Indians at the Wankhede Stadium on Wednesday. CSK captain Ruturaj Gaikwad was the star, scoring an unbeaten 67 off 44 balls.</p><p>Mumbai had posted a competitive 178/5, anchored by Rohit Sharma\'s 54. But CSK\'s bowling unit, led by Matheesha Pathirana\'s 3/28, kept the total within reach. Devon Conway provided early momentum in the chase, before Gaikwad took control.</p><p>CSK now lead the table with 6 wins from 8 games. Mumbai slipped to fourth. The next game is on Saturday when RCB host DC at Chinnaswamy.</p>' },
+  { id: 'rbi', cat: 'Finance', catColor: 'var(--accent)', title: 'RBI holds repo rate at 6%, signals easing cycle may begin in Q3 2026', excerpt: 'The monetary policy committee cited improving inflation trajectory while flagging global uncertainty as a reason for caution.', time: '4 hr ago', read: '3 min', emoji: '🏦', tag: 'business', body: '<p>The Reserve Bank of India\'s Monetary Policy Committee voted 5-1 to hold the repo rate at 6.0% for the fourth consecutive meeting. However, in a notable shift in language, Governor Shaktikanta Das hinted that a rate cut cycle could begin by Q3 if CPI inflation remains below 4.5%.</p><p>The rupee strengthened marginally to 83.3 on the announcement. Bond markets rallied, with the 10-year yield falling 8 basis points to 7.01%.</p><p>Economists broadly welcomed the signal. "The RBI has found the right balance — anchoring inflation expectations while keeping the door open for easing," said an ICICI Bank economist. GDP growth for FY26 was revised upward to 7.2%.</p>' },
+  { id: 'cannes', cat: 'Entertainment', catColor: '#8e44ad', title: 'Cannes 2026 lineup unveiled with record five Indian films in Official Selection', excerpt: 'The Cannes Film Festival has selected five Indian films across its competitive and sidebar sections, the highest-ever representation from the subcontinent.', time: '5 hr ago', read: '2 min', emoji: '🎬', tag: 'entertainment', body: '<p>The Cannes Film Festival 2026 has unveiled its official selection, with a record five Indian productions making the cut. Payal Kapadia\'s follow-up to her 2024 Grand Prix winner will compete in the main competition, while two Tamil and two Malayalam films feature in Un Certain Regard and Directors\' Fortnight.</p><p>Festival director Thierry Frémaux called it "a celebration of the extraordinary creative flowering happening in Indian regional cinema." Bollywood, notably, is absent from the competitive sections — all five films are independent productions.</p><p>Indian cinema\'s global rise has been dramatic. In the past three years, Indian films have won at Venice, Sundance, and Berlin, signaling a new era for the industry beyond its domestic commercial dominance.</p>' },
+  { id: 'brief', cat: 'AI Brief', catColor: 'var(--teal)', title: 'PulseAI Daily Brief — April 16, 2026', excerpt: 'Your AI-curated summary of the most important stories from the past 24 hours, across all categories.', time: 'Just now', read: '6 min', emoji: '🤖', tag: 'all', body: '<p><strong>Top Story:</strong> The G7 AI governance framework is today\'s defining story. Markets responded positively — tech stocks globally gained 1.8%, while Indian markets hit all-time highs on FII buying.</p><p><strong>Finance:</strong> The RBI kept rates steady but signaled a Q3 cut. The rupee held firm. Reliance Industries posted record Q4 profits of ₹21,900 crore, beating estimates by 12%.</p><p><strong>Technology:</strong> QubitCore\'s $500M quantum raise and Meta\'s AR glasses milestone at 10M users were the two big tech stories. AI regulation talk dominated developer forums.</p><p><strong>Sports:</strong> CSK topped the IPL table after beating MI. Neeraj Chopra set a new national record in Doha. India won the U-19 Women\'s Asia Cup.</p><p><strong>World:</strong> India-Pakistan trade talks resumed in Dubai. The UN Security Council met over Red Sea tensions. Singapore launched the world\'s first AI-governed port.</p>' },
+  { id: 'cert1', cat: 'Learning', catColor: 'var(--teal)', title: 'AI Journalism Fundamentals — Module 3: Verifying AI-Generated Content', excerpt: 'In this module, you\'ll learn systematic approaches to fact-checking AI-written articles and identifying hallucinations.', time: 'Course', read: '25 min', emoji: '📖', tag: 'all', body: '<p>Welcome to Module 3 of AI Journalism Fundamentals. By now, you understand how large language models generate text. In this module, we focus on verification — the journalist\'s most critical skill when working with AI tools.</p><p><strong>What is hallucination?</strong> AI models sometimes generate confident-sounding text that is factually incorrect. Unlike human errors, AI hallucinations can be highly plausible and difficult to detect without source verification.</p><p><strong>The SIFT Framework:</strong> Stop — Investigate the source — Find better coverage — Trace claims. Applied to AI output, SIFT helps journalists quickly identify unsupported claims before publication.</p><p>Complete the quiz at the end of this module to earn 50 learning points and unlock Module 4: AI Ethics in the Newsroom.</p>' },
+];
+
+// ── RENDER FEED ──
+function renderFeed(filter) {
+  const feed = document.getElementById('articleFeed');
+  const filtered = filter === 'all' ? articles : articles.filter(a => a.tag === filter);
+  if (!filtered.length) {
+    feed.innerHTML = '<p style="color:var(--ink-muted);padding:20px 0;font-family:var(--font-mono);font-size:13px">No articles in this category yet.</p>';
+    return;
+  }
+  feed.innerHTML = filtered.map(a => `
+    <div class="feed-article" onclick="openArticle('${a.id}')">
+      <div>
+        <div class="feed-article-cat" style="color:${a.catColor}">${a.cat}</div>
+        <div class="feed-article-title">${a.title}</div>
+        <div class="feed-article-excerpt">${a.excerpt}</div>
+        <div class="feed-article-meta">
+          <div class="ai-chip">AI-generated</div>
+          <span>${a.time}</span>
+          <span>· ${a.read} read</span>
+        </div>
+      </div>
+      <div class="feed-article-img" style="background:var(--paper-2)">${a.emoji}</div>
+    </div>
+  `).join('');
+}
+renderFeed('all');
+
+// ── FILTER ──
+function filterArticles(tag) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  event && event.target && event.target.classList.add('active');
+  renderFeed(tag);
+  document.getElementById('articleFeed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── MODAL ──
+const articleMap = {};
+articles.forEach(a => articleMap[a.id] = a);
+
+function openArticle(id) {
+  const a = articleMap[id];
+  if (!a) return;
+  document.getElementById('modalCat').textContent = a.cat;
+  document.getElementById('modalCat').style.color = a.catColor;
+  document.getElementById('modalTitle').textContent = a.title;
+  document.getElementById('modalMeta').innerHTML = `<span class="ai-chip" style="display:inline-flex;margin-right:10px">AI-generated</span><span>${a.time} · ${a.read} read</span>`;
+  document.getElementById('modalBody').innerHTML = a.body;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
+function closeModalBtn() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+
+// ── TOPIC PILLS ──
+function toggleTopic(el) { el.classList.toggle('active'); }
+function addTopic() {
+  const t = prompt('Enter a topic to follow:');
+  if (!t) return;
+  const wrap = document.getElementById('topicsWrap');
+  const pill = document.createElement('span');
+  pill.className = 'topic-pill active';
+  pill.textContent = t;
+  pill.onclick = function() { toggleTopic(this); };
+  wrap.insertBefore(pill, wrap.lastElementChild);
+}
+
+// ── SCROLL TO SECTION ──
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── CHAT ──
+function toggleChat() {
+  document.getElementById('chatPanel').classList.toggle('open');
+}
+const chatBotReplies = [
+  "Great point! The G7 deal is being seen as a market catalyst.",
+  "Agreed — India's macro story is looking strong in 2026.",
+  "The RBI signaling Q3 cuts is huge for equities and real estate.",
+  "CSK's bowling lineup this season has been exceptional.",
+  "Quantum computing is still 5+ years from mainstream, but this raise is a sign.",
+];
+let botReplyIndex = 0;
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const msgs = document.getElementById('chatMsgs');
+  msgs.innerHTML += `<div class="chat-msg user"><div class="chat-msg-bubble">${text}</div></div>`;
+  input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => {
+    msgs.innerHTML += `<div class="chat-msg bot"><div class="chat-msg-bubble">${chatBotReplies[botReplyIndex % chatBotReplies.length]}</div></div>`;
+    botReplyIndex++;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 900);
+}
+function handleChatKey(e) { if (e.key === 'Enter') sendChat(); }
+
+// ── SEARCH ──
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  if (!q) { renderFeed('all'); return; }
+  const filtered = articles.filter(a =>
+    a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q) || a.cat.toLowerCase().includes(q)
+  );
+  const feed = document.getElementById('articleFeed');
+  if (!filtered.length) {
+    feed.innerHTML = `<p style="color:var(--ink-muted);padding:20px 0;font-family:var(--font-mono);font-size:13px">No results for "${this.value}".</p>`;
+    return;
+  }
+  feed.innerHTML = filtered.map(a => `
+    <div class="feed-article" onclick="openArticle('${a.id}')">
+      <div>
+        <div class="feed-article-cat" style="color:${a.catColor}">${a.cat}</div>
+        <div class="feed-article-title">${a.title}</div>
+        <div class="feed-article-excerpt">${a.excerpt}</div>
+        <div class="feed-article-meta"><div class="ai-chip">AI-generated</div><span>${a.time} · ${a.read} read</span></div>
+      </div>
+      <div class="feed-article-img" style="background:var(--paper-2)">${a.emoji}</div>
+    </div>
+  `).join('');
+});
+
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
